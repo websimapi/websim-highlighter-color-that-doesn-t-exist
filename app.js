@@ -117,6 +117,22 @@ const App = () => {
         }
     };
 
+    // Convert highlighter style object to CSS string
+    const getHighlighterCssString = (style) => {
+        let cssString = "";
+        for (const [key, value] of Object.entries(style)) {
+            // Convert camelCase to kebab-case
+            const kebabKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
+            cssString += `${kebabKey}: ${value}; `;
+        }
+        return cssString;
+    };
+
+    // Helper to parse CSS-like object to React style object
+    const getStyleObject = (styleObj) => {
+        return styleObj; // Already in the correct format for React
+    };
+
     // Apply highlighter to selected text
     const applyHighlighter = () => {
         if (!selectedText || !activeHighlighter) return;
@@ -131,27 +147,15 @@ const App = () => {
         setSelectedText("");
     };
 
-    // Convert highlighter style object to CSS string
-    const getHighlighterCssString = (style) => {
-        let cssString = "";
-        for (const [key, value] of Object.entries(style)) {
-            // Convert camelCase to kebab-case
-            const kebabKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
-            cssString += `${kebabKey}: ${value}; `;
-        }
-        return cssString;
-    };
-
     // Render highlighter preview
     const renderHighlighterPreview = () => {
         if (!activeHighlighter) return null;
         
-        const style = getHighlighterCssString(activeHighlighter.style);
         return (
             <div className="highlighter-preview">
                 <div>Selected: <strong>{activeHighlighter.name}</strong></div>
                 <p>
-                    <span className="highlighted-text" style={activeHighlighter.style}>
+                    <span className="highlighted-text" style={getStyleObject(activeHighlighter.style)}>
                         This is how your highlighter looks
                     </span>
                 </p>
@@ -244,7 +248,7 @@ const App = () => {
                                     <div 
                                         key={highlighter.id} 
                                         className={`highlighter-item ${activeHighlighter?.id === highlighter.id ? 'active' : ''}`}
-                                        style={highlighter.style}
+                                        style={getStyleObject(highlighter.style)}
                                         onClick={() => setActiveHighlighter(highlighter)}
                                         title={highlighter.name}
                                     />
@@ -263,7 +267,7 @@ const App = () => {
                         <div key={highlighter.id} style={{ margin: '10px', textAlign: 'center' }}>
                             <div 
                                 className="highlighter-item" 
-                                style={{ ...highlighter.style, width: '80px', height: '80px', margin: '0 auto' }}
+                                style={{ ...getStyleObject(highlighter.style), width: '80px', height: '80px', margin: '0 auto' }}
                             />
                             <p style={{ marginTop: '5px', fontSize: '12px' }}>{highlighter.name}</p>
                         </div>
@@ -278,4 +282,3 @@ const App = () => {
 const rootElement = document.getElementById('app');
 const root = createRoot(rootElement);
 root.render(<App />);
-
